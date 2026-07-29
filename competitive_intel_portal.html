@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Competitive Intelligence Portal — Elastic</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --elastic-blue: #0B64DD;
+    --light-teal: #48EFCF;
+    --light-poppy: #FF957D;
+    --pink: #F04E98;
+    --yellow: #FEC514;
+    --midnight: #153385;
+    --developer-blue: #101C3F;
+    --dark-ink: #1C1E23;
+    --ink: #343741;
+    --light-grey: #F5F7FA;
+    --white: #FFFFFF;
+    --font: 'Inter', Arial, sans-serif;
+    --mono: 'Space Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    background: var(--light-grey);
+    color: var(--ink);
+    line-height: 1.6;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    background: var(--elastic-blue);
+    padding: 36px 48px 32px;
+    color: white;
+  }
+  .site-header .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .elastic-logo {
+    width: 100px;
+    height: auto;
+  }
+  .site-header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .site-header .subtitle {
+    font-size: 14px;
+    opacity: 0.8;
+    margin-top: 4px;
+  }
+  .meta-row {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .meta-chip {
+    background: rgba(255,255,255,0.15);
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .meta-chip.updated {
+    background: var(--light-teal);
+    color: var(--developer-blue);
+    font-family: var(--mono);
+  }
+
+  /* ── Layout ── */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+
+  /* ── Section labels ── */
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--elastic-blue);
+    margin-bottom: 16px;
+  }
+  .section-label::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: var(--light-teal);
+    margin-top: 6px;
+  }
+
+  /* ── Summary table ── */
+  .summary-section {
+    background: white;
+    border-radius: 8px;
+    border: 1.5px solid var(--developer-blue);
+    overflow: hidden;
+    margin-bottom: 40px;
+  }
+  .summary-section .section-header {
+    background: var(--developer-blue);
+    color: white;
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    display: grid;
+    grid-template-columns: 160px 1fr 1fr;
+    gap: 16px;
+  }
+  .summary-row {
+    padding: 14px 20px;
+    display: grid;
+    grid-template-columns: 160px 1fr 1fr;
+    gap: 16px;
+    border-bottom: 1px solid #e8ecf0;
+    font-size: 13.5px;
+    align-items: start;
+    transition: background 0.15s;
+  }
+  .summary-row:hover { background: var(--light-grey); }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row.no-update { opacity: 0.55; }
+  .vendor-name {
+    font-weight: 700;
+    color: var(--dark-ink);
+    font-size: 13px;
+  }
+  .key-theme { color: var(--ink); }
+  .watch-signal {
+    color: var(--ink);
+    font-style: italic;
+    font-size: 13px;
+  }
+  .no-update-text { color: #999; font-style: italic; }
+
+  /* ── Vendor cards ── */
+  .vendors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+  .vendor-card {
+    background: white;
+    border-radius: 8px;
+    border: 1.5px solid var(--developer-blue);
+    overflow: hidden;
+  }
+  .vendor-card.no-update {
+    border-color: #d0d5dd;
+    opacity: 0.7;
+  }
+  .card-header {
+    padding: 16px 20px 14px;
+    border-bottom: 1px solid #e8ecf0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-vendor-name {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--dark-ink);
+  }
+  .status-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 100px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .status-badge.active {
+    background: #e6f4ea;
+    color: #1a7232;
+  }
+  .status-badge.quiet {
+    background: #f0f0f0;
+    color: #888;
+  }
+  .card-body {
+    padding: 16px 20px;
+  }
+  .card-body p {
+    font-size: 13.5px;
+    color: var(--ink);
+    line-height: 1.65;
+    margin-bottom: 12px;
+  }
+  .card-body p:last-child { margin-bottom: 0; }
+  .no-update-msg {
+    font-size: 13.5px;
+    color: #aaa;
+    font-style: italic;
+    padding: 4px 0;
+  }
+
+  /* ── Further reading ── */
+  .further-reading {
+    background: white;
+    border-radius: 8px;
+    border: 1.5px solid var(--developer-blue);
+    overflow: hidden;
+    margin-bottom: 40px;
+  }
+  .fr-header {
+    background: var(--developer-blue);
+    color: white;
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+  .fr-body {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 0;
+  }
+  .fr-vendor {
+    padding: 16px 20px;
+    border-right: 1px solid #e8ecf0;
+    border-bottom: 1px solid #e8ecf0;
+  }
+  .fr-vendor:last-child { border-right: none; }
+  .fr-vendor-name {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--dark-ink);
+    margin-bottom: 10px;
+  }
+  .fr-vendor-name::after {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 2px;
+    background: var(--light-teal);
+    margin-top: 4px;
+  }
+  .fr-link {
+    display: block;
+    font-size: 13px;
+    color: var(--elastic-blue);
+    text-decoration: none;
+    margin-bottom: 6px;
+    line-height: 1.45;
+  }
+  .fr-link:hover { text-decoration: underline; }
+  .fr-link::before {
+    content: '→ ';
+    font-size: 11px;
+    opacity: 0.6;
+  }
+
+  /* ── Quick read ── */
+  .quick-read {
+    background: var(--elastic-blue);
+    border-radius: 8px;
+    padding: 24px 28px;
+    color: white;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .quick-read::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: var(--light-teal);
+  }
+  .quick-read .label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--light-teal);
+    margin-bottom: 10px;
+  }
+  .quick-read p {
+    font-size: 15px;
+    line-height: 1.7;
+    opacity: 0.95;
+  }
+  .quick-read strong {
+    color: var(--light-teal);
+    font-weight: 700;
+  }
+
+  /* ── Footer ── */
+  .site-footer {
+    background: var(--developer-blue);
+    color: rgba(255,255,255,0.55);
+    padding: 20px 48px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .site-footer a { color: var(--light-teal); text-decoration: none; }
+  .site-footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header class="site-header">
+  <div class="brand">
+    <!-- Elastic wordmark as inline SVG -->
+    <svg class="elastic-logo" viewBox="0 0 200 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Elastic">
+      <path d="M14.5 8C9.25 8 5 12.25 5 17.5c0 2.56.98 4.89 2.58 6.63C6.58 25.36 6 26.85 6 28.5 6 33.19 9.81 37 14.5 37c3.07 0 5.77-1.56 7.36-3.93A8.44 8.44 0 0 0 24 33.5c4.69 0 8.5-3.81 8.5-8.5 0-1.43-.36-2.78-.99-3.96A9.5 9.5 0 0 0 24 8a9.48 9.48 0 0 0-6.18 2.28A8.47 8.47 0 0 0 14.5 8Z" fill="#FEC514"/>
+      <path d="M7.58 24.13A8.45 8.45 0 0 0 14.5 28c1.86 0 3.58-.6 4.98-1.62l6.84 4.04A8.44 8.44 0 0 1 24 33.5c0 .17-.01.34-.02.5l-7.62-4.5-9.33-5.13.55-.24Z" fill="#48EFCF"/>
+      <path d="M31.51 21.54A8.5 8.5 0 0 1 24 25c-1.78 0-3.43-.55-4.8-1.48L12.36 27.6A8.44 8.44 0 0 1 14.5 28a8.45 8.45 0 0 1-6.92-3.87l9.33 5.13 7.62 4.5c-1.59 2.37-4.29 3.93-7.36 3.93-1.14 0-2.22-.23-3.21-.63l9.19-16.06 8.36 0.54Z" fill="#F04E98"/>
+      <text x="44" y="28" font-family="Inter, Arial, sans-serif" font-weight="800" font-size="22" fill="white">elastic</text>
+    </svg>
+  </div>
+  <h1>Competitive Intelligence Portal</h1>
+  <p class="subtitle">Datadog · Grafana Labs · ClickHouse · Dynatrace · New Relic · Splunk</p>
+  <div class="meta-row">
+    <span class="meta-chip">72-hour pulse</span>
+    <span class="meta-chip">July 26–29, 2026</span>
+    <span class="meta-chip updated">Last updated: Wed 29 Jul 2026, 09:00</span>
+    <span class="meta-chip">Refreshed every weekday morning</span>
+  </div>
+</header>
+
+<!-- ── Main ── -->
+<main class="container">
+
+  <!-- Quick read -->
+  <div class="quick-read">
+    <div class="label">Quick read</div>
+    <p>
+      <strong>The story of the last 72 hours is Grafana vs. Dynatrace:</strong> both dropped autonomous operations announcements on July 27, framing the same problem differently — Grafana via open-source agentic tooling, Dynatrace via deterministic AI governance for enterprise. New Relic's Autopilot also reached GA this week, making autonomous incident response a crowded space virtually overnight.
+    </p>
+  </div>
+
+  <!-- Summary table -->
+  <div class="section-label">At a glance</div>
+  <div class="summary-section">
+    <div class="section-header">
+      <span>Vendor</span>
+      <span>Key development</span>
+      <span>Watch signal</span>
+    </div>
+    <div class="summary-row no-update">
+      <span class="vendor-name">Datadog</span>
+      <span class="no-update-text">No updates</span>
+      <span class="no-update-text">—</span>
+    </div>
+    <div class="summary-row">
+      <span class="vendor-name">Grafana Labs</span>
+      <span class="key-theme">AI Week launch: 6 agentic ops tools shipped Jul 27, daily releases continue through Friday</span>
+      <span class="watch-signal">Agent Observability & Cloud MCP server directly target Elastic's AI monitoring story</span>
+    </div>
+    <div class="summary-row">
+      <span class="vendor-name">ClickHouse</span>
+      <span class="key-theme">26.6 release with AI embedding functions; AWS Summit event Jul 29</span>
+      <span class="watch-signal">Incremental — no major new product announcements this window</span>
+    </div>
+    <div class="summary-row">
+      <span class="vendor-name">Dynatrace</span>
+      <span class="key-theme">Autonomous SRE Agent, Cloud SRE Agent, and no-code Agent Builder all launched Jul 27</span>
+      <span class="watch-signal">Deterministic AI governance pitch may resonate with regulated enterprise buyers</span>
+    </div>
+    <div class="summary-row">
+      <span class="vendor-name">New Relic</span>
+      <span class="key-theme">Autopilot reached GA; Ground Truth AI governance and Slack integration also landed</span>
+      <span class="watch-signal">Autopilot GA makes autonomous incident response standard across top 4 vendors</span>
+    </div>
+    <div class="summary-row no-update">
+      <span class="vendor-name">Splunk / Cisco</span>
+      <span class="no-update-text">No updates (ES 8.6.0 shipped Jul 21 — just outside this window)</span>
+      <span class="no-update-text">—</span>
+    </div>
+  </div>
+
+  <!-- Vendor cards -->
+  <div class="section-label">Vendor details</div>
+  <div class="vendors-grid">
+
+    <!-- Datadog -->
+    <div class="vendor-card no-update">
+      <div class="card-header">
+        <span class="card-vendor-name">Datadog</span>
+        <span class="status-badge quiet">No updates</span>
+      </div>
+      <div class="card-body">
+        <p class="no-update-msg">No product announcements in the past 72 hours. Next milestone: Q2 FY2026 earnings call on August 6.</p>
+      </div>
+    </div>
+
+    <!-- Grafana Labs -->
+    <div class="vendor-card">
+      <div class="card-header">
+        <span class="card-vendor-name">Grafana Labs</span>
+        <span class="status-badge active">Active</span>
+      </div>
+      <div class="card-body">
+        <p>AI Week is underway (Jul 27–31), with new releases dropping daily at 16:00 UTC. Day 1 (Jul 27) shipped six generally available tools: <strong>Assistant Investigations</strong>, <strong>Assistant Workspace</strong>, <strong>Assistant Automations</strong>, the <strong>Grafana Cloud MCP server</strong>, <strong>gcx CLI</strong>, and <strong>Agent Observability</strong>.</p>
+        <p>Agent Observability gives teams running LLM agents in production a single place to monitor behaviour, trace conversations, track costs, and evaluate output quality. The Cloud MCP server gives AI agents native access to Grafana Cloud tooling at machine speed.</p>
+      </div>
+    </div>
+
+    <!-- ClickHouse -->
+    <div class="vendor-card">
+      <div class="card-header">
+        <span class="card-vendor-name">ClickHouse</span>
+        <span class="status-badge quiet">Minor</span>
+      </div>
+      <div class="card-body">
+        <p>The July 2026 newsletter landed this week, covering the <strong>26.6 release</strong> highlights: AI embedding functions, hypothetical skip indexes, and pg_re2 (Postgres regex extension with up to 8.6× performance gains). An AWS Summit Bogotá warm-up event is running July 29.</p>
+        <p>No major product announcements in this specific 72-hour window beyond the newsletter.</p>
+      </div>
+    </div>
+
+    <!-- Dynatrace -->
+    <div class="vendor-card">
+      <div class="card-header">
+        <span class="card-vendor-name">Dynatrace</span>
+        <span class="status-badge active">Active</span>
+      </div>
+      <div class="card-body">
+        <p>On July 27, Dynatrace launched major advancements to <strong>Dynatrace Intelligence</strong>: an <strong>Autonomous SRE Agent</strong> for automated incident resolution, a <strong>Cloud SRE Agent</strong> for multi-cloud remediation across AWS, Azure, and GCP, and a no-code <strong>Agent Builder</strong> for creating custom AI agents without writing code.</p>
+        <p>The announcement deepens integrations with ServiceNow, Atlassian, and PagerDuty. Dynatrace's "deterministic AI" framing — auditable, governed, human-override-capable — is a deliberate contrast to probabilistic LLM approaches.</p>
+      </div>
+    </div>
+
+    <!-- New Relic -->
+    <div class="vendor-card">
+      <div class="card-header">
+        <span class="card-vendor-name">New Relic</span>
+        <span class="status-badge active">Active</span>
+      </div>
+      <div class="card-body">
+        <p><strong>Autopilot</strong> — New Relic's AI-driven incident investigation and root cause analysis tool — reached general availability this week, alongside <strong>Ground Truth</strong> for AI governance. An Autopilot Slack integration allows in-thread incident investigation without leaving Slack.</p>
+        <p><strong>Smart alerts</strong> entered public preview, automatically monitoring entity alert coverage against recommended standards and enabling bulk condition creation.</p>
+      </div>
+    </div>
+
+    <!-- Splunk -->
+    <div class="vendor-card no-update">
+      <div class="card-header">
+        <span class="card-vendor-name">Splunk / Cisco</span>
+        <span class="status-badge quiet">No updates</span>
+      </div>
+      <div class="card-body">
+        <p class="no-update-msg">No updates in this window. Enterprise Security 8.6.0 (Controlled Availability) shipped July 21 — just outside the 72-hour cutoff.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Further reading -->
+  <div class="section-label">Further reading</div>
+  <div class="further-reading">
+    <div class="fr-header">Sources</div>
+    <div class="fr-body">
+
+      <div class="fr-vendor">
+        <div class="fr-vendor-name">Grafana Labs</div>
+        <a class="fr-link" href="https://finance.yahoo.com/technology/ai/articles/grafana-labs-ships-six-tools-160000233.html" target="_blank">Grafana Labs ships six tools for agentic operations</a>
+        <a class="fr-link" href="https://grafana.ai/events/ai-week" target="_blank">AI Week event page (Jul 27–31)</a>
+        <a class="fr-link" href="https://grafana.com/whats-new/2026-07-27-workspace-is-now-generally-available-in-grafana-cloud/" target="_blank">Assistant Workspace now GA in Grafana Cloud</a>
+      </div>
+
+      <div class="fr-vendor">
+        <div class="fr-vendor-name">ClickHouse</div>
+        <a class="fr-link" href="https://clickhouse.com/blog/202607-newsletter" target="_blank">July 2026 newsletter (26.6 release highlights)</a>
+        <a class="fr-link" href="https://clickhouse.com/docs/whats-new/changelog/cloud" target="_blank">ClickHouse Cloud changelog 2026</a>
+      </div>
+
+      <div class="fr-vendor">
+        <div class="fr-vendor-name">Dynatrace</div>
+        <a class="fr-link" href="https://www.dynatrace.com/news/press-release/autonomous-operations-enterprise-ai/" target="_blank">Autonomous Operations for enterprise AI (press release)</a>
+        <a class="fr-link" href="https://www.dynatrace.com/news/blog/how-dynatrace-and-servicenow-are-powering-autonomous-it/" target="_blank">How Dynatrace and ServiceNow are powering autonomous IT</a>
+      </div>
+
+      <div class="fr-vendor">
+        <div class="fr-vendor-name">New Relic</div>
+        <a class="fr-link" href="https://docs.newrelic.com/whats-new/" target="_blank">What's new in New Relic (Autopilot GA, Ground Truth)</a>
+        <a class="fr-link" href="https://newrelic.com/blog/news/new-relic-now-june-2026-round-up" target="_blank">New Relic Now June 2026 round-up</a>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<!-- ── Footer ── -->
+<footer class="site-footer">
+  <span>Elastic — Internal competitive intelligence · Not for external distribution</span>
+  <span>Regenerated automatically every weekday morning · <a href="mailto:frank.swain@elastic.co">frank.swain@elastic.co</a></span>
+</footer>
+
+</body>
+</html>
