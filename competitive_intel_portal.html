@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Competitive Intelligence Portal — Elastic</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --elastic-blue: #0B64DD;
+    --light-teal: #48EFCF;
+    --light-poppy: #FF957D;
+    --pink: #F04E98;
+    --yellow: #FEC514;
+    --midnight: #153385;
+    --developer-blue: #101C3F;
+    --dark-ink: #1C1E23;
+    --ink: #343741;
+    --light-grey: #F5F7FA;
+    --white: #FFFFFF;
+    --font: 'Inter', Arial, sans-serif;
+    --mono: 'Space Mono', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--light-grey); color: var(--ink); line-height: 1.6; }
+  .site-header { background: var(--elastic-blue); padding: 36px 48px 32px; color: white; }
+  .site-header h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+  .site-header .subtitle { font-size: 14px; opacity: 0.8; margin-top: 4px; }
+  .meta-row { display: flex; align-items: center; gap: 24px; margin-top: 20px; flex-wrap: wrap; }
+  .meta-chip { background: rgba(255,255,255,0.15); border-radius: 4px; padding: 4px 10px; font-size: 12px; font-weight: 500; }
+  .meta-chip.updated { background: var(--light-teal); color: var(--developer-blue); font-family: var(--mono); }
+  .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+  .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: var(--elastic-blue); margin-bottom: 16px; }
+  .section-label::after { content: ''; display: block; width: 60px; height: 3px; background: var(--light-teal); margin-top: 6px; }
+  .quick-read { background: var(--elastic-blue); border-radius: 8px; padding: 24px 28px 24px 32px; color: white; margin-bottom: 40px; position: relative; overflow: hidden; }
+  .quick-read::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--light-teal); }
+  .quick-read .label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: var(--light-teal); margin-bottom: 10px; }
+  .quick-read p { font-size: 15px; line-height: 1.7; opacity: 0.95; }
+  .quick-read strong { color: var(--light-teal); font-weight: 700; }
+  .summary-section { background: white; border-radius: 8px; border: 1.5px solid var(--developer-blue); overflow: hidden; margin-bottom: 40px; }
+  .summary-section .section-header { background: var(--developer-blue); color: white; padding: 12px 20px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; display: grid; grid-template-columns: 160px 1fr 1fr; gap: 16px; }
+  .summary-row { padding: 14px 20px; display: grid; grid-template-columns: 160px 1fr 1fr; gap: 16px; border-bottom: 1px solid #e8ecf0; font-size: 13.5px; align-items: start; transition: background 0.15s; }
+  .summary-row:hover { background: var(--light-grey); }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row.no-update { opacity: 0.55; }
+  .vendor-name { font-weight: 700; color: var(--dark-ink); font-size: 13px; }
+  .watch-signal { color: var(--ink); font-style: italic; font-size: 13px; }
+  .no-update-text { color: #999; font-style: italic; }
+  .vendors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(480px, 1fr)); gap: 24px; margin-bottom: 40px; }
+  .vendor-card { background: white; border-radius: 8px; border: 1.5px solid var(--developer-blue); overflow: hidden; }
+  .vendor-card.no-update { border-color: #d0d5dd; opacity: 0.7; }
+  .card-header { padding: 16px 20px 14px; border-bottom: 1px solid #e8ecf0; display: flex; align-items: center; justify-content: space-between; }
+  .card-vendor-name { font-size: 16px; font-weight: 800; color: var(--dark-ink); }
+  .status-badge { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .status-badge.active { background: #e6f4ea; color: #1a7232; }
+  .status-badge.quiet { background: #f0f0f0; color: #888; }
+  .card-body { padding: 16px 20px; }
+  .card-body p { font-size: 13.5px; color: var(--ink); line-height: 1.65; margin-bottom: 12px; }
+  .card-body p:last-child { margin-bottom: 0; }
+  .no-update-msg { font-size: 13.5px; color: #aaa; font-style: italic; padding: 4px 0; }
+  .further-reading { background: white; border-radius: 8px; border: 1.5px solid var(--developer-blue); overflow: hidden; margin-bottom: 40px; }
+  .fr-header { background: var(--developer-blue); color: white; padding: 12px 20px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; }
+  .fr-body { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 0; }
+  .fr-vendor { padding: 16px 20px; border-right: 1px solid #e8ecf0; border-bottom: 1px solid #e8ecf0; }
+  .fr-vendor-name { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--dark-ink); margin-bottom: 10px; }
+  .fr-vendor-name::after { content: ''; display: block; width: 32px; height: 2px; background: var(--light-teal); margin-top: 4px; }
+  .fr-link { display: block; font-size: 13px; color: var(--elastic-blue); text-decoration: none; margin-bottom: 6px; line-height: 1.45; }
+  .fr-link:hover { text-decoration: underline; }
+  .fr-link::before { content: '→ '; font-size: 11px; opacity: 0.6; }
+  .site-footer { background: var(--developer-blue); color: rgba(255,255,255,0.55); padding: 20px 48px; font-size: 12px; display: flex; align-items: center; justify-content: space-between; }
+  .site-footer a { color: var(--light-teal); text-decoration: none; }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <h1>Competitive Intelligence Portal</h1>
+  <p class="subtitle">Datadog · Grafana Labs · ClickHouse · Dynatrace · New Relic · Splunk</p>
+  <div class="meta-row">
+    <span class="meta-chip">72-hour pulse</span>
+    <span class="meta-chip">July 31 – August 3, 2026</span>
+    <span class="meta-chip updated">Last updated: Mon 3 Aug 2026, 09:00</span>
+    <span class="meta-chip">Refreshed every weekday morning</span>
+  </div>
+</header>
+<main class="container">
+  <div class="quick-read">
+    <div class="label">Quick read</div>
+    <p>The agentic operations race intensified this window: <strong>Grafana Labs</strong> closed out its AI Week (July 27–31) by shipping six autonomous observability tools — including <strong>Grafana Assistant</strong>, an MCP server, and the new <strong>GCX</strong> instrumentation agent — while <strong>Dynatrace</strong> unveiled autonomous SRE and Cloud SRE agents that auto-triage and remediate incidents without human intervention. <strong>New Relic</strong>'s <strong>Autopilot</strong> and <strong>Ground Truth</strong> hit general availability in late July, completing a trio of competitors all positioning their platforms as self-operating at machine speed. Elastic should expect increased scrutiny from prospects comparing agentic observability narratives across all three vendors.</p>
+  </div>
+
+  <div class="section-label">At a glance</div>
+  <div class="summary-section">
+    <div class="section-header"><span>Vendor</span><span>Key development</span><span>Watch signal</span></div>
+
+    <div class="summary-row">
+      <span class="vendor-name">Grafana Labs</span>
+      <span>Wrapped AI Week (July 27–31) with six GA agentic tools: Assistant Workspace, Assistant Investigations, Assistant Automations, a Cloud MCP server, GCX, and Agent Observability.</span>
+      <span class="watch-signal">The Grafana Cloud MCP server and GCX agent directly target developer workflows; watch for these showing up in competitive POCs where Elastic's OTel story is being evaluated.</span>
+    </div>
+
+    <div class="summary-row">
+      <span class="vendor-name">Dynatrace</span>
+      <span>Launched Autonomous Operations for Enterprise AI (July 27) with an autonomous SRE Agent, Cloud SRE Agent for AWS/Azure/GCP remediation, and a no-code Agent Builder.</span>
+      <span class="watch-signal">Dynatrace's causal AI + autonomous remediation is a direct counter to Elastic's AI-for-ops positioning — expect this to appear in RFP responses and analyst briefings.</span>
+    </div>
+
+    <div class="summary-row">
+      <span class="vendor-name">New Relic</span>
+      <span>Autopilot (automated SRE agent) and Ground Truth (AI-optimized observability data substrate for third-party agents) reached GA availability in late July 2026.</span>
+      <span class="watch-signal">Ground Truth's explicit support for Claude Code, GitHub Copilot, and custom orchestrators makes New Relic a potential integration target for AI coding workflows that Elastic also competes in.</span>
+    </div>
+
+    <div class="summary-row">
+      <span class="vendor-name">Splunk</span>
+      <span>Named a Leader in the 2026 IDC MarketScape for Worldwide SIEM; also released Enterprise Security 8.6 in controlled availability with AI-powered Detection Builder, Malware Reversing, and Phishing Analysis agents.</span>
+      <span class="watch-signal">Splunk's SIEM leadership reinforcement and AI SOC agents strengthen Cisco's unified security platform narrative — relevant for Elastic Security competitive positioning.</span>
+    </div>
+
+    <div class="summary-row no-update">
+      <span class="vendor-name">Datadog</span>
+      <span class="no-update-text">No new product announcements this window; Q2 FY2026 earnings call set for August 6.</span>
+      <span class="no-update-text">Watch the August 6 earnings call for guidance signals and any strategic announcements tied to quarterly results.</span>
+    </div>
+
+    <div class="summary-row no-update">
+      <span class="vendor-name">ClickHouse</span>
+      <span class="no-update-text">No updates this window; most recent news (Fulham FC shirt sponsorship, July 21) falls outside the 72-hour lookback.</span>
+      <span class="no-update-text">—</span>
+    </div>
+  </div>
+
+  <div class="section-label">Vendor details</div>
+  <div class="vendors-grid">
+
+    <div class="vendor-card">
+      <div class="card-header">
+        <span class="card-vendor-name">Grafana Labs</span>
+        <span class="status-badge active">Active</span>
+      </div>
+      <div class="card-body">
+        <p>Grafana Labs ran a five-day <strong>AI Week</strong> (July 27–31), releasing one major capability per day at 16:00 UTC. The full set: <strong>Grafana Assistant Workspace</strong> (full-page AI planning and onboarding), <strong>Assistant Investigations</strong> (automated incident investigation), <strong>Assistant Automations</strong> (no-code remediation workflows), the <strong>Grafana Cloud MCP server</strong> (giving coding agents production context from telemetry), <strong>GCX</strong> (telemetry-driven instrumentation for AI apps), and <strong>Grafana Agent Observability</strong> (monitoring AI agent behaviour in production).</p>
+        <p>Grafana's 2026 Observability Survey found 92% of practitioners see value in AI anomaly detection but only 57% observe their own AI systems — a gap these tools explicitly address. The company is also positioned furthest in Completeness of Vision in the 2026 Gartner MQ for Observability Platforms.</p>
+      </div>
+    </div>
+
+    <div class="vendor-card">
+      <div class="card-header">
+        <span class="card-vendor-name">Dynatrace</span>
+        <span class="status-badge active">Active</span>
+      </div>
+      <div class="card-body">
+        <p>On July 27, Dynatrace announced major additions to <strong>Dynatrace Intelligence</strong> under the banner "Autonomous Operations for Enterprise AI." The headline features: an <strong>Autonomous SRE Agent</strong> that triggers on newly detected problems, enriches investigations, and links related incidents automatically; a <strong>Cloud SRE Agent</strong> that coordinates remediation across AWS, Azure, and Google Cloud; and an <strong>Agent Builder</strong> allowing customers to create custom AI agents without code.</p>
+        <p>Dynatrace's approach pairs its patented causal AI engine (deterministic root-cause analysis) with generative AI agents, positioning autonomous action as safe because it is grounded in causal context rather than probabilistic inference. The company also pursued FedRAMP High authorization and expanded its board with an AI and cloud veteran earlier in July.</p>
+      </div>
+    </div>
+
+    <div class="vendor-card">
+      <div class="card-header">
+        <span class="card-vendor-name">New Relic</span>
+        <span class="status-badge active">Active</span>
+      </div>
+      <div class="card-body">
+        <p><strong>New Relic Autopilot</strong> — an out-of-the-box automated SRE agent that begins analysing an incident the moment an alert fires and drives toward root cause and safe remediation — reached general availability in late July 2026. Alongside it, <strong>New Relic Ground Truth</strong> became available: an AI-optimised data substrate that gives third-party agents (GitHub Copilot, Claude Code, AWS DevOps Guru, or custom orchestrators) direct programmatic access to New Relic's deepest observability insights.</p>
+        <p>Both capabilities were originally announced June 23 at the New Relic Advance 2026 event. New Relic also announced a user conference, <strong>RUNTIME at RenderATL</strong>, co-located with the developer event in Atlanta on August 12–13.</p>
+      </div>
+    </div>
+
+    <div class="vendor-card">
+      <div class="card-header">
+        <span class="card-vendor-name">Splunk</span>
+        <span class="status-badge active">Active</span>
+      </div>
+      <div class="card-body">
+        <p>Splunk was named a Leader in the <strong>2026 IDC MarketScape for Worldwide SIEM</strong>, reinforcing Cisco's unified security platform story following Splunk.conf where the integrated Cisco + Splunk roadmap was showcased. In parallel, <strong>Splunk Enterprise Security 8.6</strong> entered controlled availability with a suite of AI-powered security agents: a Detection Builder agent (natural-language SPL authoring), a Malware Reversing agent, a Phishing Analysis agent, and a Guided Response agent that recommends SOAR playbooks from investigation context.</p>
+        <p>Splunk also released a security advisory patching a critical CVE (CVE-2026-20253) affecting Splunk Enterprise versions below 10.2.4 and 10.0.7 via an OpenSSL upgrade.</p>
+      </div>
+    </div>
+
+    <div class="vendor-card no-update">
+      <div class="card-header">
+        <span class="card-vendor-name">Datadog</span>
+        <span class="status-badge quiet">Quiet</span>
+      </div>
+      <div class="card-body">
+        <p class="no-update-msg">No product announcements in the 72-hour window. Q2 FY2026 earnings call is scheduled for Thursday, August 6 at 8:00 a.m. ET — watch for strategic commentary and any product guidance. Most recent major move was Gartner MQ Leader recognition (6th consecutive year, July 15) and DASH 2026's 100+ feature launch in June.</p>
+      </div>
+    </div>
+
+    <div class="vendor-card no-update">
+      <div class="card-header">
+        <span class="card-vendor-name">ClickHouse</span>
+        <span class="status-badge quiet">Quiet</span>
+      </div>
+      <div class="card-body">
+        <p class="no-update-msg">No updates this window. Most recent news: Fulham FC front-of-shirt sponsorship announced July 21 (brand awareness play). Prior to that: $250M ARR milestone, 4,000 customers, Claude-powered ClickHouse Agents, and Fulham shirt announced at Open House 2026 in May. July 2026 newsletter covered the 26.6 release with hypothetical skip indexes and AI embedding functions.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-label">Further reading</div>
+  <div class="further-reading">
+    <div class="fr-header">Sources</div>
+    <div class="fr-body">
+
+      <div class="fr-vendor">
+        <div class="fr-vendor-name">Grafana Labs</div>
+        <a class="fr-link" href="https://grafana.com/blog/grafanacon-2026-announcements/">GrafanaCON 2026 announcements: a guide to all the latest news from Grafana Labs</a>
+        <a class="fr-link" href="https://www.helpnetsecurity.com/2026/07/28/grafana-assistant-ai-capabilities/">Grafana Assistant expands with AI agents for investigations, automation, and observability — Help Net Security</a>
+        <a class="fr-link" href="https://www.hpcwire.com/bigdatawire/this-just-in/grafana-labs-ships-6-tools-that-power-agentic-operations-from-planning-to-production/">Grafana Labs ships 6 tools that power agentic operations from planning to production — BigDATAwire</a>
+      </div>
+
+      <div class="fr-vendor">
+        <div class="fr-vendor-name">Dynatrace</div>
+        <a class="fr-link" href="https://www.dynatrace.com/news/press-release/autonomous-operations-enterprise-ai/">Dynatrace brings autonomous operations to enterprise AI, moving from insight to action — Dynatrace</a>
+        <a class="fr-link" href="https://www.hpcwire.com/bigdatawire/this-just-in/dynatrace-brings-autonomous-operations-to-enterprise-ai-moving-from-insight-to-action/">Dynatrace autonomous operations coverage — BigDATAwire</a>
+        <a class="fr-link" href="https://www.dynatrace.com/news/press-release/dynatrace-announces-intent-to-pursue-fedramp-high-and-expanded-government-security-standards/">Dynatrace announces intent to pursue FedRAMP High — Dynatrace</a>
+      </div>
+
+      <div class="fr-vendor">
+        <div class="fr-vendor-name">New Relic</div>
+        <a class="fr-link" href="https://www.businesswire.com/news/home/20260623369005/en/New-Relic-Autopilot-and-New-Relic-Ground-Truth-Capabilities-Supercharge-Agentic-AI-First-Businesses">New Relic Autopilot and Ground Truth capabilities supercharge agentic AI-first businesses — BusinessWire</a>
+        <a class="fr-link" href="https://itbrief.com.au/story/new-relic-launches-autopilot-ground-truth-for-ai">New Relic launches Autopilot and Ground Truth for AI — IT Brief</a>
+        <a class="fr-link" href="https://newrelic.com/blog/news/new-relic-advance-2026">New Relic Advance 2026: operating beyond human scale — New Relic</a>
+      </div>
+
+      <div class="fr-vendor">
+        <div class="fr-vendor-name">Splunk</div>
+        <a class="fr-link" href="https://www.splunk.com/en_us/blog/security/splunk-leader-in-2026-idc-marketscape-for-worldwide-siem.html">Splunk named a Leader in the 2026 IDC MarketScape for worldwide SIEM — Splunk</a>
+        <a class="fr-link" href="https://hurricanelabs.com/blog/splunk-enterprise-security-new-updates-2026/">Splunk Enterprise Security new updates 2026 — Hurricane Labs</a>
+        <a class="fr-link" href="https://www.computerweekly.com/news/366630512/Splunkconf-Splunk-and-Cisco-showcase-unified-platform">Splunk.conf: Splunk and Cisco showcase unified platform — Computer Weekly</a>
+      </div>
+
+    </div>
+  </div>
+</main>
+<footer class="site-footer">
+  <span>Elastic — Internal competitive intelligence · Not for external distribution</span>
+  <span>Regenerated automatically every weekday morning · <a href="mailto:frank.swain@elastic.co">frank.swain@elastic.co</a></span>
+</footer>
+</body>
+</html>
