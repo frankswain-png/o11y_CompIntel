@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Competitive Intelligence Portal — Elastic</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --elastic-blue: #0B64DD;
+    --light-teal: #48EFCF;
+    --light-poppy: #FF957D;
+    --pink: #F04E98;
+    --yellow: #FEC514;
+    --midnight: #153385;
+    --developer-blue: #101C3F;
+    --dark-ink: #1C1E23;
+    --ink: #343741;
+    --light-grey: #F5F7FA;
+    --white: #FFFFFF;
+    --font: 'Inter', Arial, sans-serif;
+    --mono: 'Space Mono', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--light-grey); color: var(--ink); line-height: 1.6; }
+  .site-header { background: var(--elastic-blue); padding: 36px 48px 32px; color: white; }
+  .site-header h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+  .site-header .subtitle { font-size: 14px; opacity: 0.8; margin-top: 4px; }
+  .meta-row { display: flex; align-items: center; gap: 24px; margin-top: 20px; flex-wrap: wrap; }
+  .meta-chip { background: rgba(255,255,255,0.15); border-radius: 4px; padding: 4px 10px; font-size: 12px; font-weight: 500; }
+  .meta-chip.updated { background: var(--light-teal); color: var(--developer-blue); font-family: var(--mono); }
+  .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+  .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: var(--elastic-blue); margin-bottom: 16px; }
+  .section-label::after { content: ''; display: block; width: 60px; height: 3px; background: var(--light-teal); margin-top: 6px; }
+  .quick-read { background: var(--elastic-blue); border-radius: 8px; padding: 24px 28px 24px 32px; color: white; margin-bottom: 40px; position: relative; overflow: hidden; }
+  .quick-read::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--light-teal); }
+  .quick-read .label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: var(--light-teal); margin-bottom: 10px; }
+  .quick-read p { font-size: 15px; line-height: 1.7; opacity: 0.95; }
+  .quick-read strong { color: var(--light-teal); font-weight: 700; }
+  .summary-section { background: white; border-radius: 8px; border: 1.5px solid var(--developer-blue); overflow: hidden; margin-bottom: 40px; }
+  .summary-section .section-header { background: var(--developer-blue); color: white; padding: 12px 20px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; display: grid; grid-template-columns: 160px 1fr 1fr; gap: 16px; }
+  .summary-row { padding: 14px 20px; display: grid; grid-template-columns: 160px 1fr 1fr; gap: 16px; border-bottom: 1px solid #e8ecf0; font-size: 13.5px; align-items: start; transition: background 0.15s; }
+  .summary-row:hover { background: var(--light-grey); }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row.no-update { opacity: 0.55; }
+  .vendor-name { font-weight: 700; color: var(--dark-ink); font-size: 13px; }
+  .watch-signal { color: var(--ink); font-style: italic; font-size: 13px; }
+  .no-update-text { color: #999; font-style: italic; }
+  .vendors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(480px, 1fr)); gap: 24px; margin-bottom: 40px; }
+  .vendor-card { background: white; border-radius: 8px; border: 1.5px solid var(--developer-blue); overflow: hidden; }
+  .vendor-card.no-update { border-color: #d0d5dd; opacity: 0.7; }
+  .card-header { padding: 16px 20px 14px; border-bottom: 1px solid #e8ecf0; display: flex; align-items: center; justify-content: space-between; }
+  .card-vendor-name { font-size: 16px; font-weight: 800; color: var(--dark-ink); }
+  .status-badge { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .status-badge.active { background: #e6f4ea; color: #1a7232; }
+  .status-badge.quiet { background: #f0f0f0; color: #888; }
+  .card-body { padding: 16px 20px; }
+  .card-body p { font-size: 13.5px; color: var(--ink); line-height: 1.65; margin-bottom: 12px; }
+  .card-body p:last-child { margin-bottom: 0; }
+  .no-update-msg { font-size: 13.5px; color: #aaa; font-style: italic; padding: 4px 0; }
+  .further-reading { background: white; border-radius: 8px; border: 1.5px solid var(--developer-blue); overflow: hidden; margin-bottom: 40px; }
+  .fr-header { background: var(--developer-blue); color: white; padding: 12px 20px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; }
+  .fr-body { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 0; }
+  .fr-vendor { padding: 16px 20px; border-right: 1px solid #e8ecf0; border-bottom: 1px solid #e8ecf0; }
+  .fr-vendor-name { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--dark-ink); margin-bottom: 10px; }
+  .fr-vendor-name::after { content: ''; display: block; width: 32px; height: 2px; background: var(--light-teal); margin-top: 4px; }
+  .fr-link { display: block; font-size: 13px; color: var(--elastic-blue); text-decoration: none; margin-bottom: 6px; line-height: 1.45; }
+  .fr-link:hover { text-decoration: underline; }
+  .fr-link::before { content: '-> '; font-size: 11px; opacity: 0.6; }
+  .site-footer { background: var(--developer-blue); color: rgba(255,255,255,0.55); padding: 20px 48px; font-size: 12px; display: flex; align-items: center; justify-content: space-between; }
+  .site-footer a { color: var(--light-teal); text-decoration: none; }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <h1>Competitive Intelligence Portal</h1>
+  <p class="subtitle">Datadog · Grafana Labs · ClickHouse · Dynatrace · New Relic · Splunk</p>
+  <div class="meta-row">
+    <span class="meta-chip">72-hour pulse</span>
+    <span class="meta-chip">Aug 1–4, 2026</span>
+    <span class="meta-chip updated">Last updated: Tue 4 Aug 2026, 07:00</span>
+    <span class="meta-chip">Refreshed every weekday morning</span>
+  </div>
+</header>
+<main class="container">
+  <div class="quick-read">
+    <div class="label">Quick read</div>
+    <p>The biggest story this window is <strong>Grafana Labs</strong> culminating its AI Week (Jul 27–31) by shipping six agentic operations tools — including an MCP server, agentic CLI, and automated investigation/remediation workflows — that position it as a full-stack AI ops platform. <strong>ClickHouse</strong> made a significant talent move, hiring CMU database legend Andy Pavlo to lead a new research group, signalling longer-term ambitions around autonomous query optimisation. <strong>Datadog</strong> is quiet ahead of its Aug 6 Q2 earnings call, with analyst sentiment broadly positive on AI-driven ARR growth above $1B.</p>
+  </div>
+  <div class="section-label">At a glance</div>
+  <div class="summary-section">
+    <div class="section-header"><span>Vendor</span><span>Key development</span><span>Watch signal</span></div>
+    <div class="summary-row no-update">
+      <span class="vendor-name">Datadog</span>
+      <span class="no-update-text">No product news; Q2 earnings on Aug 6 with analyst expectations above $1B revenue.</span>
+      <span class="watch-signal">Earnings call may include product announcements — watch for Bits AI roadmap and ARR guidance updates.</span>
+    </div>
+    <div class="summary-row">
+      <span class="vendor-name">Grafana Labs</span>
+      <span>Shipped six agentic AI tools during AI Week (Jul 27–31), extending Grafana Assistant into a full agentic ops layer: investigations, automations, MCP server, and CLI.</span>
+      <span class="watch-signal">Direct challenge to Elastic's AI assistant strategy — Grafana now offers end-to-end agentic remediation natively in open-source tooling.</span>
+    </div>
+    <div class="summary-row">
+      <span class="vendor-name">ClickHouse</span>
+      <span>Launched ClickHouse Labs on Aug 3, hiring CMU's Andy Pavlo (VLDB Early Career Award, Sloan Fellow) as VP of Database Research for foundational DB science.</span>
+      <span class="watch-signal">Long-term signal: research into autonomous query optimisation could widen ClickHouse's performance gap with competing log/analytics stores including Elasticsearch.</span>
+    </div>
+    <div class="summary-row no-update">
+      <span class="vendor-name">Dynatrace</span>
+      <span class="no-update-text">Partner PowerUp enablement series running Aug–Sept; no product launch this window.</span>
+      <span class="watch-signal">Quiet externally; partner mobilisation ahead of Q3 may be prepping a fall announcement cycle.</span>
+    </div>
+    <div class="summary-row no-update">
+      <span class="vendor-name">New Relic</span>
+      <span class="no-update-text">Autopilot SRE agent went GA in late July; RUNTIME conference announced for Aug 12–13 at RenderATL.</span>
+      <span class="watch-signal">RUNTIME keynote (Kelsey Hightower, Aug 12) could surface new platform announcements — monitor agent observability positioning vs. Elastic.</span>
+    </div>
+    <div class="summary-row no-update">
+      <span class="vendor-name">Splunk</span>
+      <span class="no-update-text">No product launches this window; .conf26 scheduled for Sept 14–17 in Denver.</span>
+      <span class="watch-signal">Pre-.conf26 quiet period — expect coordinated Cisco/Splunk platform messaging to ramp from mid-August onward.</span>
+    </div>
+  </div>
+  <div class="section-label">Vendor details</div>
+  <div class="vendors-grid">
+
+    <div class="vendor-card no-update">
+      <div class="card-header">
+        <span class="card-vendor-name">Datadog</span>
+        <span class="status-badge quiet">Quiet</span>
+      </div>
+      <div class="card-body">
+        <p class="no-update-msg">No major product announcements in the Aug 1–4 window. Datadog reports Q2 FY2026 earnings before market open on Aug 6, with analysts expecting approximately $1.08B in revenue and $0.58 EPS. Sentiment is broadly positive: remaining performance obligations grew 51% to $3.48B, signalling strong multi-year contract momentum.</p>
+        <p class="no-update-msg">The most recent major product release remains the <strong>DASH 2026</strong> launch (June) of 100+ capabilities, including Bits AI autonomous operations, Federated Logs (querying Databricks/ClickHouse), BYOC Logs, and AI Guard for protecting AI agents from attack.</p>
+      </div>
+    </div>
+
+    <div class="vendor-card">
+      <div class="card-header">
+        <span class="card-vendor-name">Grafana Labs</span>
+        <span class="status-badge active">Active</span>
+      </div>
+      <div class="card-body">
+        <p>During <strong>Grafana AI Week</strong> (Jul 27–31, 2026), Grafana Labs shipped six generally available AI tools extending <strong>Grafana Assistant</strong> into a full agentic operations layer — detecting, investigating, and remediating production issues with minimal human intervention.</p>
+        <p>The six tools: <strong>Grafana Assistant Investigations</strong> (automated hypothesis generation and telemetry analysis), <strong>Grafana Assistant Workspace</strong> (full-page agent-native interface), <strong>Grafana Assistant Automations</strong> (runbook automation), <strong>Grafana Cloud MCP server</strong> (manage dashboards/alerts as code via any MCP-compatible client), <strong>gcx</strong> (agentic Grafana CLI), and <strong>Grafana Agent Observability</strong>.</p>
+        <p>Grafana's 2026 Observability Survey found 92% of practitioners value AI anomaly detection, yet only 57% are monitoring their own AI systems — framing these releases as closing that gap at the operator layer.</p>
+      </div>
+    </div>
+
+    <div class="vendor-card">
+      <div class="card-header">
+        <span class="card-vendor-name">ClickHouse</span>
+        <span class="status-badge active">Active</span>
+      </div>
+      <div class="card-body">
+        <p>On <strong>Aug 3, 2026</strong>, ClickHouse announced <strong>ClickHouse Labs</strong>, a new research group focused on foundational database science. <strong>Andy Pavlo</strong> — CMU professor, VLDB Early Career Award winner, Sloan Fellow, and father of the self-driving database concept (NoisePage/OtterTune) — joins as VP of Database Research.</p>
+        <p>ClickHouse Labs will publish research openly, covering autonomous databases, query processing, systems performance, and infrastructure for both ClickHouse and PostgreSQL workloads, testing everything against real production data.</p>
+        <p>This is a strategic long-game hire: Pavlo's work on ML-driven query optimisation and autonomous tuning could eventually be incorporated directly into ClickHouse's engine, compounding its query performance advantage over Elasticsearch and other log analytics stores.</p>
+      </div>
+    </div>
+
+    <div class="vendor-card no-update">
+      <div class="card-header">
+        <span class="card-vendor-name">Dynatrace</span>
+        <span class="status-badge quiet">Quiet</span>
+      </div>
+      <div class="card-body">
+        <p class="no-update-msg">No product launches in the Aug 1–4 window. <strong>Partner PowerUp</strong> — a midyear executive enablement series — is running Aug–Sept 2026 (EMEA: Oct 6–7; APAC: Oct 20–21), following <strong>Amplify 2026</strong> where Dynatrace opened its internal Dynapulse sales enablement programme to the channel for the first time.</p>
+        <p class="no-update-msg">The most recent headline was Dynatrace's 16th consecutive inclusion as a Leader in the <strong>2026 Gartner Magic Quadrant for Observability Platforms</strong> (July 15). The company surpassed $2B ARR in FY2026.</p>
+      </div>
+    </div>
+
+    <div class="vendor-card no-update">
+      <div class="card-header">
+        <span class="card-vendor-name">New Relic</span>
+        <span class="status-badge quiet">Quiet</span>
+      </div>
+      <div class="card-body">
+        <p class="no-update-msg">No major product releases in the 72-hour window. <strong>New Relic Autopilot</strong> (automated SRE agent for incident investigation, root cause analysis, and remediation recommendations) and <strong>New Relic Ground Truth</strong> (AI-optimised data substrate for agentic integrations) reached GA in late July 2026.</p>
+        <p class="no-update-msg">New Relic also announced <strong>RUNTIME</strong>, its debut user conference co-located with RenderATL on Aug 12–13. Headlined by Kelsey Hightower with a keynote from Killer Mike, the event covers OpenTelemetry for AI, alert quality management, and agent observability — potential platform announcements likely.</p>
+      </div>
+    </div>
+
+    <div class="vendor-card no-update">
+      <div class="card-header">
+        <span class="card-vendor-name">Splunk</span>
+        <span class="status-badge quiet">Quiet</span>
+      </div>
+      <div class="card-body">
+        <p class="no-update-msg">No press releases or product launches from Cisco/Splunk in the Aug 1–4 window. <strong>.conf26</strong> runs Sept 14–17 in Denver — expect Cisco platform messaging to ramp significantly from mid-August. Last major research: <em>The Hidden Costs of Downtime</em> (May 2026) placed annual unplanned downtime for Global 2000 companies at $600B.</p>
+        <p class="no-update-msg">Security context: Critical CVE-2026-20253 (CVSS 9.8) in Splunk Enterprise — unauthenticated remote code execution via PostgreSQL sidecar — was actively exploited in June and added to CISA's KEV catalog. Customer urgency around patching may create an Elastic observability displacement opportunity.</p>
+      </div>
+    </div>
+
+  </div>
+  <div class="section-label">Further reading</div>
+  <div class="further-reading">
+    <div class="fr-header">Sources</div>
+    <div class="fr-body">
+
+      <div class="fr-vendor">
+        <div class="fr-vendor-name">Grafana Labs</div>
+        <a class="fr-link" href="https://www.businesswire.com/news/home/20260727216919/en/Grafana-Labs-Ships-Six-Tools-That-Power-Agentic-Operations-From-Planning-to-Production" target="_blank">BusinessWire: Six agentic operations tools GA (Jul 27)</a>
+        <a class="fr-link" href="https://www.hpcwire.com/bigdatawire/this-just-in/grafana-labs-ships-6-tools-that-power-agentic-operations-from-planning-to-production/" target="_blank">BigDATAwire: AI Week analysis and tool breakdown</a>
+        <a class="fr-link" href="https://grafana.ai/events/ai-week" target="_blank">Grafana Labs: AI Week event hub (Jul 27–31)</a>
+      </div>
+
+      <div class="fr-vendor">
+        <div class="fr-vendor-name">ClickHouse</div>
+        <a class="fr-link" href="https://www.businesswire.com/news/home/20260803890510/en/ClickHouse-Launches-ClickHouse-Labs-With-Andy-Pavlo-as-VP-of-Database-Research" target="_blank">BusinessWire: ClickHouse Labs launch with Andy Pavlo (Aug 3)</a>
+        <a class="fr-link" href="https://clickhouse.com/blog/andy-pavlo-founding-clickhouse-labs" target="_blank">ClickHouse blog: Andy Pavlo on founding ClickHouse Labs</a>
+        <a class="fr-link" href="https://finance.yahoo.com/technology/ai/articles/clickhouse-launches-clickhouse-labs-andy-133000640.html" target="_blank">Yahoo Finance: ClickHouse VP of Database Research hire</a>
+      </div>
+
+      <div class="fr-vendor">
+        <div class="fr-vendor-name">Datadog</div>
+        <a class="fr-link" href="https://www.datadoghq.com/blog/dash-2026-new-feature-roundup-keynote/" target="_blank">Datadog: DASH 2026 feature roundup (100+ capabilities)</a>
+        <a class="fr-link" href="https://investors.datadoghq.com/news-releases/news-release-details/datadog-announces-date-second-quarter-fiscal-year-2026-earnings" target="_blank">Datadog IR: Q2 FY2026 earnings call set for Aug 6</a>
+        <a class="fr-link" href="https://www.quiverquant.com/news/Datadog+Gains+as+Analyst+Optimism+and+a+Near-Term+Earnings+Catalyst+Support+Shares" target="_blank">Quiver Quantitative: Analyst optimism ahead of earnings</a>
+      </div>
+
+      <div class="fr-vendor">
+        <div class="fr-vendor-name">Dynatrace</div>
+        <a class="fr-link" href="https://www.businesswire.com/news/home/20260715559974/en/Dynatrace-Named-a-Leader-in-the-2026-Gartner-Magic-Quadrant-for-Observability-Platforms-for-the-16th-Time" target="_blank">BusinessWire: Gartner MQ Leader for 16th time (Jul 15)</a>
+        <a class="fr-link" href="https://www.dynatrace.com/news/blog/scaling-the-partner-ecosystem-for-ai-whats-new-from-dynatrace-amplify-2026/" target="_blank">Dynatrace: What's new from Amplify 2026 partner summit</a>
+      </div>
+
+      <div class="fr-vendor">
+        <div class="fr-vendor-name">New Relic</div>
+        <a class="fr-link" href="https://www.businesswire.com/news/home/20260723651335/en/New-Relic-Announces-User-Conference-New-Relic-RUNTIME-at-RenderATL" target="_blank">BusinessWire: RUNTIME conference at RenderATL announced (Jul 23)</a>
+        <a class="fr-link" href="https://www.businesswire.com/news/home/20260623369005/en/New-Relic-Autopilot-and-New-Relic-Ground-Truth-Capabilities-Supercharge-Agentic-AI-First-Businesses" target="_blank">BusinessWire: Autopilot and Ground Truth GA (Jun 23)</a>
+        <a class="fr-link" href="https://newrelic.com/blog/news/new-relic-now-june-2026-round-up" target="_blank">New Relic: June 2026 product round-up</a>
+      </div>
+
+      <div class="fr-vendor">
+        <div class="fr-vendor-name">Splunk</div>
+        <a class="fr-link" href="https://conf.splunk.com/" target="_blank">Splunk: .conf26 — Denver, Sept 14–17, 2026</a>
+        <a class="fr-link" href="https://advisory.splunk.com/advisories/SVD-2026-0603" target="_blank">Splunk Advisory: CVE-2026-20253 critical vulnerability</a>
+        <a class="fr-link" href="https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2026/m05/the-600-billion-wake-up-call-new-splunk-research-reveals-downtime-is-a-systemic-business-crisis.html" target="_blank">Cisco/Splunk: $600B downtime research report (May 2026)</a>
+      </div>
+
+    </div>
+  </div>
+</main>
+<footer class="site-footer">
+  <span>Elastic — Internal competitive intelligence · Not for external distribution</span>
+  <span>Regenerated automatically every weekday morning · <a href="mailto:frank.swain@elastic.co">frank.swain@elastic.co</a></span>
+</footer>
+</body>
+</html>
