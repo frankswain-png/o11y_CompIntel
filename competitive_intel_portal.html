@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Competitive Intelligence Portal — Elastic</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --elastic-blue: #0B64DD; --light-teal: #48EFCF; --light-poppy: #FF957D;
+    --pink: #F04E98; --yellow: #FEC514; --midnight: #153385;
+    --developer-blue: #101C3F; --dark-ink: #1C1E23; --ink: #343741;
+    --light-grey: #F5F7FA; --white: #FFFFFF;
+    --font: 'Inter', Arial, sans-serif; --mono: 'Space Mono', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--light-grey); color: var(--ink); line-height: 1.6; }
+  .site-header { background: var(--elastic-blue); padding: 28px 48px 24px; color: white; }
+  .header-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+  .header-top a.archive-link { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.8); text-decoration: none; border: 1px solid rgba(255,255,255,0.35); padding: 5px 12px; border-radius: 4px; white-space: nowrap; margin-top: 4px; transition: background 0.15s; }
+  .header-top a.archive-link:hover { background: rgba(255,255,255,0.15); color: white; }
+  .site-header h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+  .site-header .subtitle { font-size: 13px; opacity: 0.75; margin-top: 3px; }
+  .meta-row { display: flex; align-items: center; gap: 16px; margin-top: 16px; flex-wrap: wrap; }
+  .meta-chip { background: rgba(255,255,255,0.15); border-radius: 4px; padding: 3px 9px; font-size: 11px; font-weight: 500; }
+  .meta-chip.updated { background: var(--light-teal); color: var(--developer-blue); font-family: var(--mono); font-size: 11px; }
+  .filter-bar { background: var(--developer-blue); padding: 10px 48px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; position: sticky; top: 0; z-index: 100; }
+  .filter-label { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.8px; margin-right: 4px; }
+  .filter-pill { font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 100px; border: 1.5px solid rgba(255,255,255,0.25); background: transparent; color: rgba(255,255,255,0.75); cursor: pointer; transition: all 0.15s; font-family: var(--font); }
+  .filter-pill:hover { border-color: rgba(255,255,255,0.6); color: white; }
+  .filter-pill.active { background: var(--light-teal); border-color: var(--light-teal); color: var(--developer-blue); }
+  .filter-pill.reset { border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.4); font-weight: 500; }
+  .filter-pill.reset:hover { border-color: rgba(255,255,255,0.4); color: rgba(255,255,255,0.7); }
+  .filter-count { font-size: 11px; color: rgba(255,255,255,0.35); margin-left: auto; font-family: var(--mono); }
+  .container { max-width: 1100px; margin: 0 auto; padding: 36px 24px; }
+  .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: var(--elastic-blue); margin-bottom: 16px; }
+  .section-label::after { content: ''; display: block; width: 60px; height: 3px; background: var(--light-teal); margin-top: 6px; }
+  .quick-read { background: var(--elastic-blue); border-radius: 8px; padding: 22px 26px 22px 30px; color: white; margin-bottom: 36px; position: relative; overflow: hidden; }
+  .quick-read::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--light-teal); }
+  .quick-read .label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: var(--light-teal); margin-bottom: 8px; }
+  .quick-read p { font-size: 14.5px; line-height: 1.7; opacity: 0.95; }
+  .quick-read strong { color: var(--light-teal); font-weight: 700; }
+  .summary-section { background: white; border-radius: 8px; border: 1.5px solid var(--developer-blue); overflow: hidden; margin-bottom: 36px; }
+  .summary-section .section-header { background: var(--developer-blue); color: white; padding: 11px 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; display: grid; grid-template-columns: 160px 1fr 1fr; gap: 16px; }
+  .summary-row { padding: 13px 20px; display: grid; grid-template-columns: 160px 1fr 1fr; gap: 16px; border-bottom: 1px solid #e8ecf0; font-size: 13px; align-items: start; transition: background 0.15s; }
+  .summary-row:hover { background: var(--light-grey); }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row.no-update { opacity: 0.45; }
+  .vendor-name { font-weight: 700; color: var(--dark-ink); font-size: 12.5px; }
+  .watch-signal { color: var(--ink); font-style: italic; font-size: 12.5px; }
+  .no-update-text { color: #bbb; font-style: italic; }
+  .vendors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(480px, 1fr)); gap: 20px; margin-bottom: 36px; }
+  .vendor-card { background: white; border-radius: 8px; border: 1.5px solid var(--developer-blue); overflow: hidden; }
+  .vendor-card.no-update { border-color: #d0d5dd; opacity: 0.65; }
+  .card-header { padding: 14px 18px 12px; border-bottom: 1px solid #e8ecf0; display: flex; align-items: center; justify-content: space-between; }
+  .card-vendor-name { font-size: 15px; font-weight: 800; color: var(--dark-ink); }
+  .status-badge { font-size: 10.5px; font-weight: 600; padding: 3px 9px; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .status-badge.active { background: #e6f4ea; color: #1a7232; }
+  .status-badge.quiet { background: #f0f0f0; color: #888; }
+  .card-body { padding: 14px 18px; }
+  .card-body p { font-size: 13px; color: var(--ink); line-height: 1.65; margin-bottom: 10px; }
+  .card-body p:last-child { margin-bottom: 0; }
+  .no-update-msg { font-size: 13px; color: #bbb; font-style: italic; padding: 4px 0; }
+  .further-reading { background: white; border-radius: 8px; border: 1.5px solid var(--developer-blue); overflow: hidden; margin-bottom: 36px; }
+  .fr-header { background: var(--developer-blue); color: white; padding: 11px 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; }
+  .fr-body { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+  .fr-vendor { padding: 14px 18px; border-right: 1px solid #e8ecf0; border-bottom: 1px solid #e8ecf0; }
+  .fr-vendor-name { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--dark-ink); margin-bottom: 8px; }
+  .fr-vendor-name::after { content: ''; display: block; width: 28px; height: 2px; background: var(--light-teal); margin-top: 4px; }
+  .fr-link { display: block; font-size: 12.5px; color: var(--elastic-blue); text-decoration: none; margin-bottom: 5px; line-height: 1.4; }
+  .fr-link:hover { text-decoration: underline; }
+  .fr-link::before { content: '→ '; font-size: 10px; opacity: 0.55; }
+  [data-vendor].vendor-hidden { display: none !important; }
+  .site-footer { background: var(--developer-blue); color: rgba(255,255,255,0.45); padding: 18px 48px; font-size: 11.5px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .site-footer a { color: var(--light-teal); text-decoration: none; }
+  .site-footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-top">
+    <div>
+      <h1>Competitive Intelligence Portal</h1>
+      <p class="subtitle">Datadog · Grafana Labs · ClickHouse · Dynatrace · New Relic · Splunk</p>
+    </div>
+    <a class="archive-link" href="archive.html">📁 Archive</a>
+  </div>
+  <div class="meta-row">
+    <span class="meta-chip">72-hour pulse</span>
+    <span class="meta-chip">30 Aug – 2 Sep 2026</span>
+    <span class="meta-chip updated">Last updated: 02 Sep 2026, 08:47 BST</span>
+    <span class="meta-chip">Refreshed every weekday morning</span>
+  </div>
+</header>
+<div class="filter-bar">
+  <span class="filter-label">Show</span>
+  <button class="filter-pill active" data-vendor="datadog">Datadog</button>
+  <button class="filter-pill active" data-vendor="grafana">Grafana Labs</button>
+  <button class="filter-pill active" data-vendor="clickhouse">ClickHouse</button>
+  <button class="filter-pill active" data-vendor="dynatrace">Dynatrace</button>
+  <button class="filter-pill active" data-vendor="newrelic">New Relic</button>
+  <button class="filter-pill active" data-vendor="splunk">Splunk</button>
+  <button class="filter-pill reset" id="reset-filters">Reset</button>
+  <span class="filter-count" id="filter-count">6 of 6 vendors</span>
+</div>
+<main class="container">
+  <div class="quick-read">
+    <div class="label">Quick read</div>
+    <p>M&amp;A is the story of this window. <strong>Datadog</strong> shares moved on a report that Palo Alto Networks' CEO privately pitched an acquisition before settling for Chronosphere instead — confirmation that security vendors now price observability as a strategic must-have. <strong>Dynatrace</strong> drew a second wave of trade-press coverage for its $915M Arize deal and for a survey putting AI model monitoring at the top of the SRE agenda, both landing on 31 August. <strong>New Relic</strong>'s Japan region went generally available with in-region AI inference, and <strong>Grafana Labs</strong> open-sourced its Go AI SDK while shipping anomaly detection and forecasting in Grafana Cloud. <strong>ClickHouse</strong> and <strong>Splunk</strong> were quiet, but both have near-term catalysts: the Open House roadshow reaches New York on 10 September, and .conf26 opens in Denver on 14 September.</p>
+  </div>
+  <div class="section-label">At a glance</div>
+  <div class="summary-section">
+    <div class="section-header"><span>Vendor</span><span>Key development</span><span>Watch signal</span></div>
+    <div class="summary-row" data-vendor="datadog">
+      <span class="vendor-name">Datadog</span>
+      <span>The Information reported that Palo Alto Networks CEO Nikesh Arora approached Olivier Pomel in spring 2025 about an acquisition, when Datadog was valued above $40B; Pomel was not receptive and no formal offer followed. DDOG rose roughly 5% on the story, with an analyst upgrade to a $300 target alongside it.</span>
+      <span class="watch-signal">Security platforms are willing to pay a premium for observability estate, which raises the strategic ceiling on the whole category and sharpens the single-platform security-and-observability pitch Elastic already owns.</span>
+    </div>
+    <div class="summary-row" data-vendor="grafana">
+      <span class="vendor-name">Grafana Labs</span>
+      <span>Grafana Labs open-sourced the Grafana AI SDK for Go — model calls, streaming, tool execution and multi-step agents, wire-compatible with Vercel AI SDK frontend hooks — and published anomaly detection, outlier detection and forecasting in Grafana Cloud, plus production guidance on scaling Alloy as a central telemetry gateway.</span>
+      <span class="watch-signal">Grafana is buying developer mindshare by giving away the agent-building primitives, so Elastic's differentiation has to sit in retrieval quality and data-tier economics rather than agent tooling alone.</span>
+    </div>
+    <div class="summary-row no-update" data-vendor="clickhouse">
+      <span class="vendor-name">ClickHouse</span>
+      <span class="no-update-text">No significant updates in the past 72 hours.</span>
+      <span class="no-update-text">—</span>
+    </div>
+    <div class="summary-row" data-vendor="dynatrace">
+      <span class="vendor-name">Dynatrace</span>
+      <span>Trade press picked up two Dynatrace items on 31 August: CRN's analysis of the $915M Arize acquisition (signed 13 August, ~$815M cash, closing this or early next quarter), and coverage of the State of SRE and Platform Engineering 2026 survey of 919 IT leaders, in which 67% of SREs name AI model monitoring their top use case.</span>
+      <span class="watch-signal">Dynatrace is buying its way to end-to-end AI-lifecycle observability, so Elastic should expect model-evaluation and agent-trajectory capabilities on observability RFPs that previously stopped at APM.</span>
+    </div>
+    <div class="summary-row" data-vendor="newrelic">
+      <span class="vendor-name">New Relic</span>
+      <span>New Relic's Japan region reached general availability on 31 August, hosted in AWS Tokyo with ingest, storage and processing kept in-country — and, notably, AI inference running in-region so agentic investigations don't reintroduce cross-border data flow.</span>
+      <span class="watch-signal">In-region inference is becoming the new bar for sovereignty claims, so Elastic's APJ deals should lead with Elastic Cloud region coverage and where model inference physically runs.</span>
+    </div>
+    <div class="summary-row no-update" data-vendor="splunk">
+      <span class="vendor-name">Splunk / Cisco</span>
+      <span class="no-update-text">No significant updates in the past 72 hours.</span>
+      <span class="no-update-text">—</span>
+    </div>
+  </div>
+  <div class="section-label">Vendor details</div>
+  <div class="vendors-grid">
+    <div class="vendor-card" data-vendor="datadog">
+      <div class="card-header">
+        <span class="card-vendor-name">Datadog</span>
+        <span class="status-badge active">Active</span>
+      </div>
+      <div class="card-body">
+        <p>No product or partnership news, but a significant press item. The Information reported that Palo Alto Networks CEO Nikesh Arora held acquisition discussions with both Okta and Datadog over the past 18 months. Arora met Olivier Pomel in spring 2025 and pitched a hypothetical deal when Datadog was publicly valued above $40B; Pomel was unreceptive and no formal offer was made. Datadog's market cap has since roughly doubled to about $80B, which most commentary reads as putting a deal out of reach. Palo Alto's fallback moves are the more useful signal: CyberArk in July 2025, and $3.35B for Chronosphere — a direct Datadog rival in logs and observability — in January 2026.</p>
+        <p>DDOG closed the window near $224 after a roughly 5% pop on the report, accompanied by a Buy upgrade at a $300 target citing AI observability demand.</p>
+        <p><strong>Watch signal:</strong> When a security platform is willing to buy observability outright, the category's strategic value is being repriced upward — which strengthens Elastic's single-platform search, security and observability story, but also raises the odds of further consolidation among Elastic's competitors.</p>
+        <p>Standing items: management presents at Citi Global TMT on 8 September and Goldman Sachs Communacopia on 10 September — the next public read on Q3 spending trends after the post-Q2 drop on 6 August. DASH 2026's 100+ capabilities, led by the autonomous Bits AI family, remain the product baseline.</p>
+      </div>
+    </div>
+    <div class="vendor-card" data-vendor="grafana">
+      <div class="card-header">
+        <span class="card-vendor-name">Grafana Labs</span>
+        <span class="status-badge active">Active</span>
+      </div>
+      <div class="card-body">
+        <p>Grafana Labs open-sourced the Grafana AI SDK for Go, a shared foundation it originally built for its own backend teams. It provides common interfaces for calling models, streaming responses, exposing typed Go functions as tools, producing schema-validated structured output, and running multi-step agents with human-approval gates, timeouts, retries and model fallback. It speaks the Vercel AI SDK protocol, so a Go backend can stream straight into <em>useChat</em>, <em>useCompletion</em> and <em>useObject</em>, and it supports Grafana Cloud, Anthropic, OpenAI, Amazon Bedrock and any OpenAI-compatible endpoint.</p>
+        <p>Alongside it, Grafana published anomaly detection, outlier detection and forecasting in Grafana Cloud, a knowledge-graph-as-LLM-context piece on root cause analysis, Session Replay in Frontend Observability, and production guidance on running Alloy as a central telemetry gateway. Grafana 13.2 (saved queries GA, view-panel controls sidebar, Git Sync for GitHub Enterprise) is the current release, and the company is carrying its 2026 Gartner Magic Quadrant Leader placement across the site. Reported ARR is around $605M as of August.</p>
+        <p><strong>Watch signal:</strong> Giving away agent-building primitives buys developer mindshare cheaply, so Elastic's edge needs to rest on retrieval quality, index economics and data-tier control rather than on agent tooling parity.</p>
+      </div>
+    </div>
+    <div class="vendor-card no-update" data-vendor="clickhouse">
+      <div class="card-header">
+        <span class="card-vendor-name">ClickHouse</span>
+        <span class="status-badge quiet">Quiet</span>
+      </div>
+      <div class="card-body">
+        <p class="no-update-msg">No product, partnership or press development in the window; the last press release was ClickHouse Labs under Andy Pavlo on 3 August. Standing items worth tracking: the Open House roadshow resumes in New York on 10 September, Bengaluru on 22 September with the Click-a-Thon finals, then Singapore and London later in the month. Reported ARR is around $350M as of August against $160M at the end of 2025, on a $15B Series D valuation with stated IPO intent. ClickStack Cloud remains in limited private preview on AWS us-east-1, and the open-source ClickStack MCP server continues to be the vehicle for positioning ClickHouse as the store behind AI SRE agents.</p>
+      </div>
+    </div>
+    <div class="vendor-card" data-vendor="dynatrace">
+      <div class="card-header">
+        <span class="card-vendor-name">Dynatrace</span>
+        <span class="status-badge active">Active</span>
+      </div>
+      <div class="card-body">
+        <p>Two items landed in trade press on 31 August. CRN examined the Arize acquisition — signed 13 August, $915M in cash and stock with roughly $815M cash, expected to close this quarter or early next, subject to regulatory review. Arize is a 200-person Berkeley company founded in 2020 specialising in AI observability and evaluation; founders Jason Lopatecki and Aparna Dhinakaran both join at closing, with Lopatecki reporting to Rick McConnell. The strategic logic is joining Arize's visibility into model outputs, agent trajectories and tool use to Dynatrace's application, service and infrastructure telemetry.</p>
+        <p>Separately, the State of SRE and Platform Engineering 2026 report drew pickup: a survey of 919 IT leaders finding that 73% of SRE and platform engineering teams now share responsibilities across reliability and platform domains, 67% of SREs name AI model monitoring their top use case, and 58% already run model performance and accuracy monitoring. Dynatrace cites Gartner's projection that 80% of enterprises will adopt SRE practices by 2028, up from 30% in 2024.</p>
+        <p><strong>Watch signal:</strong> Dynatrace is assembling end-to-end AI-lifecycle observability by acquisition, so Elastic should expect model evaluation, agent trajectory tracing and guardrail reporting to become standard RFP line items rather than differentiators.</p>
+      </div>
+    </div>
+    <div class="vendor-card" data-vendor="newrelic">
+      <div class="card-header">
+        <span class="card-vendor-name">New Relic</span>
+        <span class="status-badge active">Active</span>
+      </div>
+      <div class="card-body">
+        <p>New Relic's Japan region went generally available on 31 August, delivering on the March commitment to open a Japanese data centre. The region is hosted in AWS Tokyo, with observability data ingested, stored and processed inside Japan, and product documentation updated across the portfolio. The most consequential detail is that AI processing for Japan-region customers runs in-region: because an investigating agent reads telemetry metadata and payloads, inference outside the country would reintroduce exactly the cross-border flow the region exists to eliminate. New Relic is targeting financial services, telecommunications, healthcare, public infrastructure and their manufacturing suppliers.</p>
+        <p><strong>Watch signal:</strong> In-region inference — not just in-region storage — is becoming the sovereignty bar, so Elastic's APJ conversations should establish region coverage and where model inference physically executes before the competitive comparison starts.</p>
+      </div>
+    </div>
+    <div class="vendor-card no-update" data-vendor="splunk">
+      <div class="card-header">
+        <span class="card-vendor-name">Splunk / Cisco</span>
+        <span class="status-badge quiet">Quiet</span>
+      </div>
+      <div class="card-body">
+        <p class="no-update-msg">No announcements in the window — most likely pre-conference embargo. .conf26 runs 14–17 September at the Colorado Convention Center in Denver with roughly 6,500 attendees expected, framed around the agentic era, with Splunk University from 12 September and BOTS 11 returning. Standing items: Cisco Data Fabric built on Splunk Enterprise and Splunk Cloud; Splunk Agent Observability powered by Cisco's Galileo acquisition, with pre-built toxicity, bias and hate-speech evaluations plus production tracing and runtime guardrails; and AI Agent Monitoring landing in Observability Cloud and AppDynamics with a Cisco AI Defense integration for prompt injection and data leakage. Expect the next material Splunk news on 14 September.</p>
+      </div>
+    </div>
+  </div>
+  <div class="section-label">Further reading</div>
+  <div class="further-reading">
+    <div class="fr-header">Sources</div>
+    <div class="fr-body">
+      <div class="fr-vendor" data-vendor="datadog">
+        <div class="fr-vendor-name">Datadog</div>
+        <a class="fr-link" href="https://www.investing.com/news/stock-market-news/palo-alto-networks-ceo-held-acquisition-talks-with-both-okta-and-datadog-4877455">Palo Alto Networks CEO held acquisition talks with both Okta and Datadog — Investing.com</a>
+        <a class="fr-link" href="https://www.theinformation.com/briefings/datadog-shares-jump-5-report-palo-alto-networks-explored-acquisition">Datadog shares jump 5% on report Palo Alto Networks explored acquisition — The Information</a>
+        <a class="fr-link" href="https://www.tipranks.com/news/palo-alto-networks-spent-28-billion-after-datadog-and-okta-talks-fell-apart">Palo Alto Networks spent $28 billion after Datadog and Okta talks fell apart — TipRanks</a>
+      </div>
+      <div class="fr-vendor" data-vendor="grafana">
+        <div class="fr-vendor-name">Grafana Labs</div>
+        <a class="fr-link" href="https://grafana.com/blog/the-grafana-ai-sdk-for-go-a-shared-foundation-for-building-ai-applications/">The Grafana AI SDK for Go: a shared foundation for building AI applications — Grafana Labs blog</a>
+        <a class="fr-link" href="https://grafana.com/blog/identify-anomalies-outlier-detection-forecasting-how-grafana-cloud-uses-ai-ml-to-make-observability-easier">Anomalies, outlier detection and forecasting: how Grafana Cloud uses AI/ML — Grafana Labs blog</a>
+        <a class="fr-link" href="https://grafana.com/blog/grafana-13-2-release-all-the-latest-features/">Grafana 13.2 release: easier ways to query and explore your data — Grafana Labs blog</a>
+      </div>
+      <div class="fr-vendor" data-vendor="dynatrace">
+        <div class="fr-vendor-name">Dynatrace</div>
+        <a class="fr-link" href="https://www.crn.com.au/news-network/ai/2026/dynatrace-boosts-its-ai-observability-portfolio-with-arize-acquisition">Dynatrace boosts its AI observability portfolio with Arize acquisition — CRN Australia</a>
+        <a class="fr-link" href="https://www.dynatrace.com/news/press-release/state-of-sre-platform-engineering-2026/">As AI scales across enterprises, breaking points emerge — Dynatrace press release</a>
+        <a class="fr-link" href="https://www.dynatrace.com/news/press-release/dynatrace-to-acquire-arize/">Dynatrace to acquire AI observability leader Arize — Dynatrace press release</a>
+      </div>
+      <div class="fr-vendor" data-vendor="newrelic">
+        <div class="fr-vendor-name">New Relic</div>
+        <a class="fr-link" href="https://newrelic.com/blog/news/japan-region-generally-available">New Relic Japan region generally available — New Relic blog</a>
+        <a class="fr-link" href="https://newrelic.com/press-release/20260311">New Relic to launch Japanese data centre to accelerate enterprise digital transformation — New Relic press release</a>
+        <a class="fr-link" href="https://datacenternews.asia/story/new-relic-to-open-first-japan-data-centre-in-tokyo">New Relic to open first Japan data centre in Tokyo — DataCenterNews Asia</a>
+      </div>
+    </div>
+  </div>
+</main>
+<footer class="site-footer">
+  <span>Elastic — Internal competitive intelligence · Not for external distribution</span>
+  <span>Regenerated every weekday morning · <a href="mailto:frank.swain@elastic.co">frank.swain@elastic.co</a> · <a href="archive.html">View archive</a></span>
+</footer>
+<script>
+  const STORAGE_KEY = 'compintel-hidden-vendors';
+  const pills = document.querySelectorAll('.filter-pill[data-vendor]');
+  const resetBtn = document.getElementById('reset-filters');
+  const countEl = document.getElementById('filter-count');
+  function getHidden() { try { return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')); } catch { return new Set(); } }
+  function saveHidden(hidden) { localStorage.setItem(STORAGE_KEY, JSON.stringify([...hidden])); }
+  function applyFilter(hidden) {
+    pills.forEach(p => p.classList.toggle('active', !hidden.has(p.dataset.vendor)));
+    document.querySelectorAll('[data-vendor]').forEach(el => { if (el.classList.contains('filter-pill')) return; el.classList.toggle('vendor-hidden', hidden.has(el.dataset.vendor)); });
+    const visible = 6 - hidden.size; countEl.textContent = `${visible} of 6 vendor${visible === 1 ? '' : 's'}`;
+  }
+  pills.forEach(pill => { pill.addEventListener('click', () => { const hidden = getHidden(); const v = pill.dataset.vendor; if (hidden.has(v)) { hidden.delete(v); } else { hidden.add(v); } saveHidden(hidden); applyFilter(hidden); }); });
+  resetBtn.addEventListener('click', () => { saveHidden(new Set()); applyFilter(new Set()); });
+  applyFilter(getHidden());
+</script>
+</body>
+</html>
